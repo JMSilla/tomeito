@@ -17,13 +17,15 @@
     {{minutes | number: "2.0"}}:{{seconds | number: "2.0"}}
   </div>
 
-  <button mat-raised-button color="primary" (click)="start()" *ngIf="startVisible" class="bottomButton">
-    Start
-  </button>
-  <button mat-raised-button (click)="cancel()" *ngIf="cancelVisible" class="bottomButton">
-    Cancel
-  </button>
-  <button mat-raised-button (click)="startRest()" *ngIf="startRestVisible" class="bottomButton">
-    Start rest
-  </button>
+  <div>
+    <button mat-raised-button color="primary" (click)="start()" *ngIf="startVisible" class="bottomButton">
+      Start
+    </button>
+    <button mat-raised-button (click)="cancel()" *ngIf="cancelVisible" class="bottomButton">
+      Cancel
+    </button>
+    <button mat-raised-button (click)="startRest()" *ngIf="startRestVisible" class="bottomButton">
+      Start rest
+    </button>
+  </div>
 </div>

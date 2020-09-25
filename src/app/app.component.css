@@ -1,5 +1,6 @@
 div.clock {
     font-size: 40pt;
+    line-height: 40pt;
     text-align: center;
 }
 
@@ -26,5 +27,4 @@ div.topBar .pomodoroCount {
 
 .bottomButton {
     width: 100%;
-    margin-top: 15px;
 }

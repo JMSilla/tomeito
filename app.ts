@@ -9,7 +9,7 @@ function initWindow() {
   var mainScreen = screenElectron.getPrimaryDisplay()
   var dimensions = mainScreen.size
   var width = Math.round(dimensions.width * 0.10)
-  var height = Math.round(dimensions.height * 0.13)
+  var height = Math.round(dimensions.height * 0.12)
 
   appWindow = new electron.BrowserWindow({
     width: width,
@@ -18,13 +18,16 @@ function initWindow() {
     y: dimensions.height - height,
     frame: false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      worldSafeExecuteJavaScript: true,
+      contextIsolation: true
     }
   })
 
   appWindow.setMenu(null)
   appWindow.setAlwaysOnTop(true, 'screen')
-
+  appWindow.setResizable(false)
+  
   // Electron Build Path
   appWindow.loadURL(
     url.format({
@@ -32,21 +35,21 @@ function initWindow() {
       protocol: "file:",
       slashes: true
     })
-  );
-
+  )
+  
   // Initialize the DevTools.
   // appWindow.webContents.openDevTools()
-
+  
   appWindow.on('closed', function () {
     appWindow = null
   })
 }
-
+  
 electron.app.on('ready', initWindow)
 
 // Close when all windows are closed.
 electron.app.on('window-all-closed', function () {
-
+  
   // On macOS specific close process
   if (process.platform !== 'darwin') {
     electron.app.quit()

@@ -69,7 +69,7 @@ export class AppComponent {
 
   private playEndIntervalSound() {
     let audio = new Audio()
-    audio.src = "../assets/sounds/bell.mp3"
+    audio.src = "assets/sounds/bell.mp3"
     audio.load()
     audio.play()
   }
