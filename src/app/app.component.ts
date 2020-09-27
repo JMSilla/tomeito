@@ -1,7 +1,5 @@
 import { Component } from '@angular/core'
-
-const POMODORO_MINUTES = 25
-const REST_MINUTES = 5
+import { ConfigService } from './config/config.service'
 
 @Component({
   selector: 'app-root',
@@ -9,8 +7,8 @@ const REST_MINUTES = 5
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Pomodoro'
-  minutes: number = POMODORO_MINUTES
+  title = 'Tomeito'
+  minutes: number = 0
   seconds: number = 0
   numberOfPomodoros: number = 0
 
@@ -21,8 +19,12 @@ export class AppComponent {
 
   interval: number
 
+  constructor(private configService: ConfigService) {
+    this.minutes = configService.getConfig().pomodoroMinutes
+  }
+
   start() {
-    this.minutes = POMODORO_MINUTES
+    this.minutes = this.configService.getConfig().pomodoroMinutes
     this.seconds = 0
 
     this.isPomodoroRunning = true
@@ -69,7 +71,7 @@ export class AppComponent {
 
   private playEndIntervalSound() {
     let audio = new Audio()
-    audio.src = "assets/sounds/bell.mp3"
+    audio.src = this.configService.getConfig().beepSoundFilePath
     audio.load()
     audio.play()
   }
@@ -77,7 +79,7 @@ export class AppComponent {
   cancel() {
     this.endInterval()
 
-    this.minutes = POMODORO_MINUTES
+    this.minutes = this.configService.getConfig().pomodoroMinutes
     this.seconds = 0
 
     this.isPomodoroRunning = false
@@ -87,7 +89,7 @@ export class AppComponent {
   }
 
   startRest() {
-    this.minutes = REST_MINUTES
+    this.minutes = this.configService.getConfig().restMinutes
     this.seconds = 0
 
     this.isPomodoroRunning = false
