@@ -1,5 +1,6 @@
 import { Component } from '@angular/core'
 import { ConfigService } from './config/config.service'
+import { IntervalService } from './interval/interval.service'
 
 @Component({
   selector: 'app-root',
@@ -17,9 +18,9 @@ export class AppComponent {
   cancelVisible: boolean = false
   startRestVisible: boolean = false
 
-  interval: number
-
-  constructor(private configService: ConfigService) {
+  constructor(private configService: ConfigService, 
+    private intervalService: IntervalService)
+  {
     this.minutes = configService.getConfig().pomodoroMinutes
   }
 
@@ -36,7 +37,7 @@ export class AppComponent {
   }
 
   private startInterval() {
-    this.interval = setInterval(() => {
+    this.intervalService.startPeriodicExecution(() => {
       if (this.seconds === 0) {
         this.minutes--
         this.seconds = 59
@@ -62,11 +63,11 @@ export class AppComponent {
           this.startRestVisible = false
         }
       }
-    }, 1000)
+    })
   }
 
   private endInterval() {
-    clearInterval(this.interval)
+    this.intervalService.stopPeriodicExecution()
   }
 
   private playEndIntervalSound() {
