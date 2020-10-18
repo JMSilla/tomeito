@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TomeitoConfig } from './model/tomato-config'
+import { TomeitoConfig } from '../model/tomato-config'
 
 const TOMEITO_CONFIG_STORAGE_KEY = "TOMEITO_CONFIG"
 

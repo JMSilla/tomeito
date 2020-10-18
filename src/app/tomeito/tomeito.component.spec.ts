@@ -1,8 +1,8 @@
 import { TestBed, async, ComponentFixture } from '@angular/core/testing';
-import { AppComponent } from './app.component';
-import { ConfigService } from './config/config.service';
-import { TomeitoConfig } from './config/model/tomato-config';
-import { IntervalService } from './interval/interval.service';
+import { TomeitoComponent } from './tomeito.component';
+import { ConfigService } from '../config/service/config.service';
+import { TomeitoConfig } from '../config/model/tomato-config';
+import { IntervalService } from '../interval/interval.service';
 
 class MockConfigService {
   getConfig(): TomeitoConfig {
@@ -36,9 +36,9 @@ class MockIntervalService {
   }
 }
 
-describe('AppComponent', () => {
-  let fixture: ComponentFixture<AppComponent>
-  let component: AppComponent
+describe('TomeitoComponent', () => {
+  let fixture: ComponentFixture<TomeitoComponent>
+  let component: TomeitoComponent
   let mockIntervalService: MockIntervalService
 
   beforeEach(async(() => {
@@ -46,7 +46,7 @@ describe('AppComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        TomeitoComponent
       ],
       providers: [ 
         {provide: ConfigService, useClass: MockConfigService},
@@ -56,7 +56,7 @@ describe('AppComponent', () => {
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AppComponent)
+    fixture = TestBed.createComponent(TomeitoComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   })
@@ -138,7 +138,7 @@ describe('AppComponent', () => {
 })
 
 function expectComponentToBeInInitialStateWithMinutesSecondsAndPomodoros(
-  component: AppComponent, minutes: number, seconds: number, pomodoros: number) 
+  component: TomeitoComponent, minutes: number, seconds: number, pomodoros: number) 
 {
   expect(component.minutes).toEqual(minutes)
   expect(component.seconds).toEqual(seconds)
@@ -150,7 +150,7 @@ function expectComponentToBeInInitialStateWithMinutesSecondsAndPomodoros(
 }
 
 function expectComponentToBeInRunningStateWithMinutesAndSeconds(
-  component: AppComponent, minutes: number, seconds: number) 
+  component: TomeitoComponent, minutes: number, seconds: number) 
 {
   expect(component.minutes).toEqual(minutes)
   expect(component.seconds).toEqual(seconds)
@@ -160,7 +160,7 @@ function expectComponentToBeInRunningStateWithMinutesAndSeconds(
   expect(component.startRestVisible).toBeFalse()
 }
 
-function expectComponentToBeInFinalState(component: AppComponent) {
+function expectComponentToBeInFinalState(component: TomeitoComponent) {
   expect(component.minutes).toEqual(0)
   expect(component.seconds).toEqual(0)
   expect(component.isPomodoroRunning).toBeFalse()
@@ -170,7 +170,7 @@ function expectComponentToBeInFinalState(component: AppComponent) {
   expect(component.numberOfPomodoros).toEqual(1)
 }
 
-function expectComponentToBeInRestRunningStateWithMinutesAndSeconds(component: AppComponent, 
+function expectComponentToBeInRestRunningStateWithMinutesAndSeconds(component: TomeitoComponent, 
   minutes: number, seconds: number) {
   expect(component.minutes).toEqual(minutes);
   expect(component.seconds).toEqual(seconds);
