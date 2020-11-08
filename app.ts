@@ -8,7 +8,7 @@ function initWindow() {
   var screenElectron = electron.screen
   var mainScreen = screenElectron.getPrimaryDisplay()
   var dimensions = mainScreen.size
-  var width = Math.round(dimensions.width * 0.10)
+  var width = Math.round(dimensions.width * 0.12)
   var height = Math.round(dimensions.height * 0.12)
 
   appWindow = new electron.BrowserWindow({
@@ -19,8 +19,11 @@ function initWindow() {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+      backgroundThrottling: false,
+      enableRemoteModule: true,
       worldSafeExecuteJavaScript: true,
-      contextIsolation: true
+      contextIsolation: false
     }
   })
 
@@ -61,3 +64,23 @@ electron.app.on('activate', function () {
     initWindow()
   }
 })
+
+electron.ipcMain.on('resize-config', function() {
+  resizeWindow(0.25, 0.25)
+})
+
+electron.ipcMain.on('resize-tomeito', function() {
+  resizeWindow(0.12, 0.12)
+})
+
+function resizeWindow(widthPct, heightPct) {
+  var screenElectron = electron.screen
+  var mainScreen = screenElectron.getPrimaryDisplay()
+  var dimensions = mainScreen.size
+  var width = Math.round(dimensions.width * widthPct)
+  var height = Math.round(dimensions.height * heightPct)
+
+  appWindow.setResizable(true)
+  appWindow.setSize(width,height)
+  appWindow.setResizable(false)
+}

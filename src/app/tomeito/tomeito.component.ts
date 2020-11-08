@@ -1,4 +1,6 @@
-import { Component } from '@angular/core'
+import { Component, EventEmitter, Output } from '@angular/core'
+import { Router } from '@angular/router'
+import { WindowService } from '../window/window.service'
 import { ConfigService } from '../config/service/config.service'
 import { IntervalService } from '../interval/interval.service'
 
@@ -17,6 +19,9 @@ export class TomeitoComponent {
   startVisible: boolean = true
   cancelVisible: boolean = false
   startRestVisible: boolean = false
+
+  @Output()
+  numberOfPomodorosChange = new EventEmitter<number>();
 
   constructor(private configService: ConfigService, 
     private intervalService: IntervalService)
@@ -51,6 +56,7 @@ export class TomeitoComponent {
 
         if (this.isPomodoroRunning) {
           this.numberOfPomodoros++
+          this.numberOfPomodorosChange.emit(this.numberOfPomodoros)
           this.isPomodoroRunning = false
           this.startVisible = false
           this.cancelVisible = false
@@ -99,13 +105,5 @@ export class TomeitoComponent {
     this.startRestVisible = false
 
     this.startInterval()
-  }
-
-  close() {
-    window.close()
-  }
-
-  settings() {
-    window.open("/settings")
   }
 }

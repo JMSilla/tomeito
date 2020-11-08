@@ -1,0 +1,21 @@
+<div class="configContainer">
+    <div>
+        <div style="font-size: 20px;">
+            <mat-form-field>
+                <mat-label>Minutes per pomodoro</mat-label>
+                <input type="number" min="1" [(ngModel)]="config.pomodoroMinutes" matInput (change)="saveConfig()"/>
+            </mat-form-field>
+        </div>
+
+        <div style="font-size: 20px;">
+            <mat-form-field>
+                <mat-label>Rest minutes</mat-label>
+                <input type="number" min="1" [(ngModel)]="config.restMinutes" matInput (change)="saveConfig()" />
+            </mat-form-field>
+        </div>
+
+        <button class="buttonReturn" mat-raised-button color="primary" (click)="return()">
+            Return
+        </button>
+    </div>
+</div>

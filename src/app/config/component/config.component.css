@@ -1,0 +1,12 @@
+* {
+    font-size: 15pt;
+}
+
+.configContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.buttonReturn {
+    width: 100%;
+}

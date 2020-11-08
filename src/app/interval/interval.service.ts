@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class IntervalService {
-  private interval: number
+  private interval: NodeJS.Timeout
 
   startPeriodicExecution(func: () => any) {
     if (!this.isExecutionStarted())
