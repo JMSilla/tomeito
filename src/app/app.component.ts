@@ -9,21 +9,11 @@ import { WindowService } from './window/window.service'
 })
 export class AppComponent {
   title = 'Tomeito'
-  numberOfPomodoros: number = 0
 
   constructor(private windowService: WindowService,
     private router: Router)
   {
     
-  }
-
-  onActivate(elementRef) {
-    if (elementRef.numberOfPomodorosChange) {
-      elementRef.numberOfPomodorosChange.subscribe(event => {
-        console.log(event)
-        this.numberOfPomodoros = event
-      })
-    }
   }
 
   close() {

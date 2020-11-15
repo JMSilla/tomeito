@@ -1,3 +1,9 @@
+<div class="pomodoroCount">
+  <span *ngFor="let i of [].constructor(numberOfPomodoros)" class="material-icons pomodoro-icons">
+      stop_circle
+  </span>
+</div>
+
 <div class="clock">
   {{minutes | number: "2.0"}}:{{seconds | number: "2.0"}}
 </div>

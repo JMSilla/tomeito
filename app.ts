@@ -8,8 +8,8 @@ function initWindow() {
   var screenElectron = electron.screen
   var mainScreen = screenElectron.getPrimaryDisplay()
   var dimensions = mainScreen.size
-  var width = Math.round(dimensions.width * 0.12)
-  var height = Math.round(dimensions.height * 0.12)
+  var width = Math.round(dimensions.width * 0.14)
+  var height = Math.round(dimensions.height * 0.14)
 
   appWindow = new electron.BrowserWindow({
     width: width,
@@ -70,7 +70,7 @@ electron.ipcMain.on('resize-config', function() {
 })
 
 electron.ipcMain.on('resize-tomeito', function() {
-  resizeWindow(0.12, 0.12)
+  resizeWindow(0.14, 0.14)
 })
 
 function resizeWindow(widthPct, heightPct) {

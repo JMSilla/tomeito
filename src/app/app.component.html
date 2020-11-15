@@ -1,20 +1,16 @@
 <div>
     <div class="topBar">
         <div class="title">Tomeito</div>
-        <div class="pomodoroCount">
-            <span *ngFor="let i of [].constructor(numberOfPomodoros)" class="material-icons">
-                stop_circle
-            </span>
-        </div>
+
         <div class="buttons">
             <button mat-icon-button (click)="settings()" class="closeButton">
-                <span class="material-icons">settings</span>
+                <span class="material-icons right-icons">settings</span>
             </button>
             <button mat-icon-button (click)="close()" class="closeButton">
-                <span class="material-icons">close</span>
+                <span class="material-icons right-icons">close</span>
             </button>
         </div>
     </div>
-
-    <router-outlet (activate)="onActivate($event)"></router-outlet>
 </div>
+
+<router-outlet></router-outlet>

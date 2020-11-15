@@ -1,3 +1,12 @@
+div.pomodoroCount {
+    text-align: center;
+    height: 20px;
+}
+
+div.pomodoroCount .pomodoro-icons {
+    font-size: 10pt;
+}
+
 div.clock {
     font-size: 40pt;
     line-height: 40pt;
