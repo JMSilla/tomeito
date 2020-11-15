@@ -1,73 +1,142 @@
-import { Component, EventEmitter, Output } from '@angular/core'
-import { Router } from '@angular/router'
-import { WindowService } from '../window/window.service'
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core'
 import { ConfigService } from '../config/service/config.service'
 import { IntervalService } from '../interval/interval.service'
+
+class TomeitoState {
+  minutes: number = 0
+  seconds: number = 0
+  numberOfPomodoros: number = 0
+
+  isPomodoroRunning: boolean = false
+  isRestRunning: boolean = false
+  isStoppedBeforePomodoro: boolean = true
+  isStoppedAfterPomodoro: boolean = false
+}
 
 @Component({
   selector: 'app-tomeito',
   templateUrl: './tomeito.component.html',
   styleUrls: ['./tomeito.component.css']
 })
-export class TomeitoComponent {
+export class TomeitoComponent implements OnInit, OnDestroy{
   title = 'Tomeito'
-  minutes: number = 0
-  seconds: number = 0
-  numberOfPomodoros: number = 0
+  tomeitoState: TomeitoState = new TomeitoState()
 
-  isPomodoroRunning: boolean = false
   startVisible: boolean = true
   cancelVisible: boolean = false
   startRestVisible: boolean = false
 
-  @Output()
-  numberOfPomodorosChange = new EventEmitter<number>();
-
   constructor(private configService: ConfigService, 
     private intervalService: IntervalService)
   {
-    this.minutes = configService.getConfig().pomodoroMinutes
+  }
+
+  ngOnInit() {
+    this.intervalService.stopPeriodicExecution()
+
+    let storedTimestamp = JSON.parse(
+        sessionStorage.getItem("storedTimestamp"))
+    let storedTomeitoState: TomeitoState = JSON.parse(
+      sessionStorage.getItem("tomeitoState"))
+    this.tomeitoState = storedTomeitoState || new TomeitoState()
+
+    if (!storedTomeitoState)
+      this.tomeitoState.minutes = this.configService.getConfig().pomodoroMinutes
+
+    if (this.tomeitoState.isPomodoroRunning || this.tomeitoState.isRestRunning) {
+      let currentTimestampInSeconds = Math.floor(Date.now() / 1000)      
+      let storedTimestampInSeconds = Math.floor(storedTimestamp / 1000)
+
+      let differenceInSeconds = currentTimestampInSeconds - storedTimestampInSeconds
+      let storedValueInSeconds = storedTomeitoState.minutes * 60 + storedTomeitoState.seconds
+      let newValueInSeconds = storedValueInSeconds - differenceInSeconds
+      
+      if (newValueInSeconds > 0) {
+        storedTomeitoState.minutes = Math.floor(newValueInSeconds / 60)
+        storedTomeitoState.seconds = Math.floor(newValueInSeconds % 60)
+        this.startInterval()
+      } else {
+        if (storedTomeitoState.isPomodoroRunning) {
+          storedTomeitoState.numberOfPomodoros++
+          storedTomeitoState.isStoppedAfterPomodoro = true
+          storedTomeitoState.isStoppedBeforePomodoro = false
+          storedTomeitoState.minutes = 0
+        }
+        else if (storedTomeitoState.isRestRunning) {
+          storedTomeitoState.isStoppedAfterPomodoro = false
+          storedTomeitoState.isStoppedBeforePomodoro = true
+          storedTomeitoState.minutes = this.configService.getConfig().pomodoroMinutes
+        }
+
+        storedTomeitoState.seconds = 0
+
+        storedTomeitoState.isPomodoroRunning = false
+        storedTomeitoState.isRestRunning = false
+      }
+    }
+
+    sessionStorage.removeItem("storedTimestamp")
+    sessionStorage.removeItem("tomeitoState")
+
+    this.refreshButtonsStatus()
+  }
+
+  private refreshButtonsStatus() {
+    this.startVisible = this.tomeitoState.isStoppedBeforePomodoro
+    this.startRestVisible = this.tomeitoState.isStoppedAfterPomodoro
+    this.cancelVisible = this.tomeitoState.isPomodoroRunning 
+      || this.tomeitoState.isRestRunning
+  }
+
+  ngOnDestroy() {
+    if (!this.tomeitoState.isStoppedBeforePomodoro) {
+      let storedTimestamp = Date.now()
+      sessionStorage.setItem("tomeitoState", JSON.stringify(this.tomeitoState))
+      sessionStorage.setItem("storedTimestamp", JSON.stringify(storedTimestamp))
+    }
   }
 
   start() {
-    this.minutes = this.configService.getConfig().pomodoroMinutes
-    this.seconds = 0
+    this.tomeitoState.minutes = this.configService.getConfig().pomodoroMinutes
+    this.tomeitoState.seconds = 0
 
-    this.isPomodoroRunning = true
-    this.startVisible = false
-    this.cancelVisible = true
-    this.startRestVisible = false
+    this.tomeitoState.isPomodoroRunning = true
+    this.tomeitoState.isRestRunning = false
+    this.tomeitoState.isStoppedBeforePomodoro = false
+    this.tomeitoState.isStoppedAfterPomodoro = false
 
+    this.refreshButtonsStatus()
     this.startInterval()
   }
 
   private startInterval() {
     this.intervalService.startPeriodicExecution(() => {
-      if (this.seconds === 0) {
-        this.minutes--
-        this.seconds = 59
+      if (this.tomeitoState.seconds === 0) {
+        this.tomeitoState.minutes--
+        this.tomeitoState.seconds = 59
       }
       else
-        this.seconds--
+        this.tomeitoState.seconds--
 
-      if (this.seconds === 0 && this.minutes === 0) {
+      if (this.tomeitoState.seconds === 0 && this.tomeitoState.minutes === 0) {
         this.playEndIntervalSound()
         this.endInterval()
 
-        if (this.isPomodoroRunning) {
-          this.numberOfPomodoros++
-          this.numberOfPomodorosChange.emit(this.numberOfPomodoros)
-          this.isPomodoroRunning = false
-          this.startVisible = false
-          this.cancelVisible = false
-          this.startRestVisible = true
+        if (this.tomeitoState.isPomodoroRunning) {
+          this.tomeitoState.numberOfPomodoros++
+          this.tomeitoState.isPomodoroRunning = false
+          this.tomeitoState.isRestRunning = false
+          this.tomeitoState.isStoppedBeforePomodoro = false
+          this.tomeitoState.isStoppedAfterPomodoro = true
         }
         else {
-          this.isPomodoroRunning = false
-          this.startVisible = true
-          this.cancelVisible = false
-          this.startRestVisible = false
+          this.tomeitoState.isPomodoroRunning = false
+          this.tomeitoState.isRestRunning = false
+          this.tomeitoState.isStoppedBeforePomodoro = true
+          this.tomeitoState.isStoppedAfterPomodoro = false
         }
+
+        this.refreshButtonsStatus()
       }
     })
   }
@@ -86,23 +155,27 @@ export class TomeitoComponent {
   cancel() {
     this.endInterval()
 
-    this.minutes = this.configService.getConfig().pomodoroMinutes
-    this.seconds = 0
+    this.tomeitoState.minutes = this.configService.getConfig().pomodoroMinutes
+    this.tomeitoState.seconds = 0
 
-    this.isPomodoroRunning = false
-    this.startVisible = true
-    this.cancelVisible = false
-    this.startRestVisible = false
+    this.tomeitoState.isPomodoroRunning = false
+    this.tomeitoState.isRestRunning = false
+    this.tomeitoState.isStoppedBeforePomodoro = true
+    this.tomeitoState.isStoppedAfterPomodoro = false
+
+    this.refreshButtonsStatus()
   }
 
   startRest() {
-    this.minutes = this.configService.getConfig().restMinutes
-    this.seconds = 0
+    this.tomeitoState.minutes = this.configService.getConfig().restMinutes
+    this.tomeitoState.seconds = 0
 
-    this.isPomodoroRunning = false
-    this.startVisible = false
-    this.cancelVisible = true
-    this.startRestVisible = false
+    this.tomeitoState.isPomodoroRunning = false
+    this.tomeitoState.isRestRunning = true
+    this.tomeitoState.isStoppedBeforePomodoro = false
+    this.tomeitoState.isStoppedAfterPomodoro = false
+
+    this.refreshButtonsStatus()
 
     this.startInterval()
   }

@@ -42,6 +42,9 @@ describe('TomeitoComponent', () => {
   let mockIntervalService: MockIntervalService
 
   beforeEach(async(() => {
+    sessionStorage.removeItem("storedTimestamp")
+    sessionStorage.removeItem("tomeitoState")
+    
     mockIntervalService = new MockIntervalService()
 
     TestBed.configureTestingModule({
@@ -140,41 +143,41 @@ describe('TomeitoComponent', () => {
 function expectComponentToBeInInitialStateWithMinutesSecondsAndPomodoros(
   component: TomeitoComponent, minutes: number, seconds: number, pomodoros: number) 
 {
-  expect(component.minutes).toEqual(minutes)
-  expect(component.seconds).toEqual(seconds)
-  expect(component.isPomodoroRunning).toBeFalse()
+  expect(component.tomeitoState.minutes).toEqual(minutes)
+  expect(component.tomeitoState.seconds).toEqual(seconds)
+  expect(component.tomeitoState.isPomodoroRunning).toBeFalse()
   expect(component.startVisible).toBeTrue()
   expect(component.cancelVisible).toBeFalse()
   expect(component.startRestVisible).toBeFalse()
-  expect(component.numberOfPomodoros).toEqual(pomodoros)
+  expect(component.tomeitoState.numberOfPomodoros).toEqual(pomodoros)
 }
 
 function expectComponentToBeInRunningStateWithMinutesAndSeconds(
   component: TomeitoComponent, minutes: number, seconds: number) 
 {
-  expect(component.minutes).toEqual(minutes)
-  expect(component.seconds).toEqual(seconds)
-  expect(component.isPomodoroRunning).toBeTrue()
+  expect(component.tomeitoState.minutes).toEqual(minutes)
+  expect(component.tomeitoState.seconds).toEqual(seconds)
+  expect(component.tomeitoState.isPomodoroRunning).toBeTrue()
   expect(component.startVisible).toBeFalse()
   expect(component.cancelVisible).toBeTrue()
   expect(component.startRestVisible).toBeFalse()
 }
 
 function expectComponentToBeInFinalState(component: TomeitoComponent) {
-  expect(component.minutes).toEqual(0)
-  expect(component.seconds).toEqual(0)
-  expect(component.isPomodoroRunning).toBeFalse()
+  expect(component.tomeitoState.minutes).toEqual(0)
+  expect(component.tomeitoState.seconds).toEqual(0)
+  expect(component.tomeitoState.isPomodoroRunning).toBeFalse()
   expect(component.startVisible).toBeFalse()
   expect(component.cancelVisible).toBeFalse()
   expect(component.startRestVisible).toBeTrue()
-  expect(component.numberOfPomodoros).toEqual(1)
+  expect(component.tomeitoState.numberOfPomodoros).toEqual(1)
 }
 
 function expectComponentToBeInRestRunningStateWithMinutesAndSeconds(component: TomeitoComponent, 
   minutes: number, seconds: number) {
-  expect(component.minutes).toEqual(minutes);
-  expect(component.seconds).toEqual(seconds);
-  expect(component.isPomodoroRunning).toBeFalse();
+  expect(component.tomeitoState.minutes).toEqual(minutes);
+  expect(component.tomeitoState.seconds).toEqual(seconds);
+  expect(component.tomeitoState.isPomodoroRunning).toBeFalse();
   expect(component.startVisible).toBeFalse();
   expect(component.cancelVisible).toBeTrue();
   expect(component.startRestVisible).toBeFalse();
