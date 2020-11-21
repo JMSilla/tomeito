@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core'
 import { ConfigService } from '../config/service/config.service'
 import { IntervalService } from '../interval/interval.service'
+import { AudioService } from '../audio/audio.service'
 
 class TomeitoState {
   minutes: number = 0
@@ -27,7 +28,8 @@ export class TomeitoComponent implements OnInit, OnDestroy{
   startRestVisible: boolean = false
 
   constructor(private configService: ConfigService, 
-    private intervalService: IntervalService)
+    private intervalService: IntervalService,
+    private audioService: AudioService)
   {
   }
 
@@ -146,10 +148,7 @@ export class TomeitoComponent implements OnInit, OnDestroy{
   }
 
   private playEndIntervalSound() {
-    let audio = new Audio()
-    audio.src = this.configService.getConfig().beepSoundFilePath
-    audio.load()
-    audio.play()
+    this.audioService.playSound(this.configService.getConfig().beepSoundFilePath)
   }
 
   cancel() {

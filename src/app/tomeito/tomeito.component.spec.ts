@@ -3,13 +3,14 @@ import { TomeitoComponent } from './tomeito.component';
 import { ConfigService } from '../config/service/config.service';
 import { TomeitoConfig } from '../config/model/tomato-config';
 import { IntervalService } from '../interval/interval.service';
+import { AudioService } from '../audio/audio.service';
 
 class MockConfigService {
   getConfig(): TomeitoConfig {
     return {
       pomodoroMinutes: 10,
       restMinutes: 2,
-      beepSoundFilePath: ""
+      beepSoundFilePath: "testSoundFile"
     }
   }
 }
@@ -36,16 +37,28 @@ class MockIntervalService {
   }
 }
 
+class MockAudioService {
+  playSoundCalled: boolean = false
+  audioFilePlayed: string = ""
+
+  playSound(soundFilePath: string) {
+    this.playSoundCalled = true
+    this.audioFilePlayed = soundFilePath
+  }
+}
+
 describe('TomeitoComponent', () => {
   let fixture: ComponentFixture<TomeitoComponent>
   let component: TomeitoComponent
   let mockIntervalService: MockIntervalService
+  let mockAudioService: MockAudioService
 
   beforeEach(async(() => {
     sessionStorage.removeItem("storedTimestamp")
     sessionStorage.removeItem("tomeitoState")
     
     mockIntervalService = new MockIntervalService()
+    mockAudioService = new MockAudioService
 
     TestBed.configureTestingModule({
       declarations: [
@@ -53,7 +66,8 @@ describe('TomeitoComponent', () => {
       ],
       providers: [ 
         {provide: ConfigService, useClass: MockConfigService},
-        {provide: IntervalService, useValue: mockIntervalService}
+        {provide: IntervalService, useValue: mockIntervalService},
+        {provide: AudioService, useValue: mockAudioService}
       ]
     }).compileComponents()
   }))
@@ -102,6 +116,8 @@ describe('TomeitoComponent', () => {
     expectComponentToBeInFinalState(component);
 
     expect(mockIntervalService.stopCalled).toBeTrue()
+    expect(mockAudioService.playSoundCalled).toBeTrue()
+    expect(mockAudioService.audioFilePlayed).toBe("testSoundFile")
   })
 
   it("clock should start rest state when rest button is clicked", () => 
@@ -137,6 +153,10 @@ describe('TomeitoComponent', () => {
     mockIntervalService.executeIntervalNumberOfTimes(2 * 60 - 1)
 
     expectComponentToBeInInitialStateWithMinutesSecondsAndPomodoros(component, 0, 0, 1)
+
+    expect(mockIntervalService.stopCalled).toBeTrue()
+    expect(mockAudioService.playSoundCalled).toBeTrue()
+    expect(mockAudioService.audioFilePlayed).toBe("testSoundFile")
   })
 })
 
