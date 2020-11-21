@@ -4,6 +4,8 @@ import { ConfigService } from '../config/service/config.service';
 import { TomeitoConfig } from '../config/model/tomato-config';
 import { IntervalService } from '../interval/interval.service';
 import { AudioService } from '../audio/audio.service';
+import { TomeitoState } from '../state/model/tomeito-state';
+import { StateService } from '../state/service/state.service';
 
 class MockConfigService {
   getConfig(): TomeitoConfig {
@@ -47,18 +49,32 @@ class MockAudioService {
   }
 }
 
+class MockStateService {
+  loadTomeitoState(): TomeitoState {
+    return null
+  }
+
+  loadStoredTimestamp(): number {
+    return null
+  }
+
+  saveTomeitoState(tomeitoState: TomeitoState) {}
+  saveTimestamp(timestamp: number) {}
+  removeTomeitoState() {}
+  removeTimestamp() {}
+}
+
 describe('TomeitoComponent', () => {
   let fixture: ComponentFixture<TomeitoComponent>
   let component: TomeitoComponent
   let mockIntervalService: MockIntervalService
   let mockAudioService: MockAudioService
+  let mockStateService: MockStateService
 
   beforeEach(async(() => {
-    sessionStorage.removeItem("storedTimestamp")
-    sessionStorage.removeItem("tomeitoState")
-    
     mockIntervalService = new MockIntervalService()
     mockAudioService = new MockAudioService
+    mockStateService = new MockStateService
 
     TestBed.configureTestingModule({
       declarations: [
@@ -67,7 +83,8 @@ describe('TomeitoComponent', () => {
       providers: [ 
         {provide: ConfigService, useClass: MockConfigService},
         {provide: IntervalService, useValue: mockIntervalService},
-        {provide: AudioService, useValue: mockAudioService}
+        {provide: AudioService, useValue: mockAudioService},
+        {provide: StateService, useValue: mockStateService}
       ]
     }).compileComponents()
   }))

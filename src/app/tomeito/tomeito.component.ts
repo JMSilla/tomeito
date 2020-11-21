@@ -2,17 +2,8 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 import { ConfigService } from '../config/service/config.service'
 import { IntervalService } from '../interval/interval.service'
 import { AudioService } from '../audio/audio.service'
-
-class TomeitoState {
-  minutes: number = 0
-  seconds: number = 0
-  numberOfPomodoros: number = 0
-
-  isPomodoroRunning: boolean = false
-  isRestRunning: boolean = false
-  isStoppedBeforePomodoro: boolean = true
-  isStoppedAfterPomodoro: boolean = false
-}
+import { StateService } from '../state/service/state.service'
+import { TomeitoState } from '../state/model/tomeito-state'
 
 @Component({
   selector: 'app-tomeito',
@@ -29,17 +20,16 @@ export class TomeitoComponent implements OnInit, OnDestroy{
 
   constructor(private configService: ConfigService, 
     private intervalService: IntervalService,
-    private audioService: AudioService)
+    private audioService: AudioService,
+    private stateService: StateService)
   {
   }
 
   ngOnInit() {
     this.intervalService.stopPeriodicExecution()
 
-    let storedTimestamp = JSON.parse(
-        sessionStorage.getItem("storedTimestamp"))
-    let storedTomeitoState: TomeitoState = JSON.parse(
-      sessionStorage.getItem("tomeitoState"))
+    let storedTimestamp = this.stateService.loadStoredTimestamp()
+    let storedTomeitoState =  this.stateService.loadTomeitoState()
     this.tomeitoState = storedTomeitoState || new TomeitoState()
 
     if (!storedTomeitoState)
@@ -77,8 +67,8 @@ export class TomeitoComponent implements OnInit, OnDestroy{
       }
     }
 
-    sessionStorage.removeItem("storedTimestamp")
-    sessionStorage.removeItem("tomeitoState")
+    this.stateService.removeTimestamp()
+    this.stateService.removeTomeitoState()
 
     this.refreshButtonsStatus()
   }
@@ -93,8 +83,8 @@ export class TomeitoComponent implements OnInit, OnDestroy{
   ngOnDestroy() {
     if (!this.tomeitoState.isStoppedBeforePomodoro) {
       let storedTimestamp = Date.now()
-      sessionStorage.setItem("tomeitoState", JSON.stringify(this.tomeitoState))
-      sessionStorage.setItem("storedTimestamp", JSON.stringify(storedTimestamp))
+      this.stateService.saveTomeitoState(this.tomeitoState)
+      this.stateService.saveTimestamp(storedTimestamp)
     }
   }
 
