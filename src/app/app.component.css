@@ -10,6 +10,11 @@ div.topBar .title {
     -webkit-app-region: drag;
 }
 
+div.topBar .title img {
+    width: 20px;
+    vertical-align: text-top;
+}
+
 div.topBar .right-icons {
     font-size: 15pt;
 }

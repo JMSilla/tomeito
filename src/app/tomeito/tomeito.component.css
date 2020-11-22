@@ -1,10 +1,10 @@
 div.pomodoroCount {
     text-align: center;
-    height: 20px;
+    height: 25px;
 }
 
 div.pomodoroCount .pomodoro-icons {
-    font-size: 10pt;
+    font-size: 14pt;
 }
 
 div.clock {
@@ -16,4 +16,6 @@ div.clock {
 .bottomButton {
     width: 100%;
     font-size: 15pt;
+    position: fixed;
+    bottom: 0;
 }

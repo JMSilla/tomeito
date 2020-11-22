@@ -9,7 +9,11 @@ function initWindow() {
   var mainScreen = screenElectron.getPrimaryDisplay()
   var dimensions = mainScreen.size
   var width = Math.round(dimensions.width * 0.14)
-  var height = Math.round(dimensions.height * 0.14)
+  var height = Math.round(dimensions.height * 0.15)
+
+  const nativeImage = electron.nativeImage;
+  var image = nativeImage.createFromPath('src/assets/icons/tomato.png'); 
+  image.setTemplateImage(true);
 
   appWindow = new electron.BrowserWindow({
     width: width,
@@ -17,6 +21,7 @@ function initWindow() {
     x: dimensions.width - width,
     y: dimensions.height - height,
     frame: false,
+    icon: image,
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
@@ -70,7 +75,7 @@ electron.ipcMain.on('resize-config', function() {
 })
 
 electron.ipcMain.on('resize-tomeito', function() {
-  resizeWindow(0.14, 0.14)
+  resizeWindow(0.14, 0.15)
 })
 
 function resizeWindow(widthPct, heightPct) {
