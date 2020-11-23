@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:electron": "ng build --base-href ./ && electron .",
-    "generate:exe": "ng build --base-href ./ && electron-packager . Tomeito --platform=win32 --arch=x64"
+    "generate:exe": "ng build --base-href ./ && electron-packager . Tomeito --platform=win32 --arch=x64 --icon=./src/assets/icons/tomato.ico"
   },
   "private": true,
   "dependencies": {
